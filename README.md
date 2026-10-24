@@ -8,6 +8,8 @@ Your daemon is a public dashboard plus a public API of yourself: your mission, c
 
 Live example: [daemon.danielmiessler.com](https://daemon.danielmiessler.com)
 
+> **This fork** runs at [daemon.michaelweihrouch.com](https://daemon.michaelweihrouch.com) on WordPress/cPanel hosting instead of Cloudflare. See [This fork: WordPress hosting](#this-fork-wordpress-hosting).
+
 ## What you get
 
 - **A technical dashboard site** — dark instrument-panel design, live telemetry bar, boot-sequence load
@@ -94,3 +96,29 @@ bun run dev
 bun test            # gate, worker, and hero-state tests
 bun run typecheck
 ```
+
+## This fork: WordPress hosting
+
+This fork runs the same dashboard on ordinary shared hosting (cPanel, PHP 8.4) next to a WordPress site, with no Cloudflare account. The dashboard code here is unchanged; the hosting pieces live in a separate private deployment project.
+
+| Upstream (Cloudflare) | This fork (WordPress / cPanel) |
+|---|---|
+| Worker serves `/daemon-data.json`, stripping expired items | `api.php` does the same, a PHP port of `src/worker.ts` |
+| KV cache + 30-minute cron trigger refresh `/feed.json` | A cPanel cron runs `refresh-feed.php` every 30 minutes and caches `feed.json` on disk |
+| Edit `daemon-data.json` in a private repo, run `deploy.sh` | Edit in WordPress: **wp-admin → Daemon** (status, now, location, offerings, requesting, profile JSON) |
+| `DeployGate.ts` runs before each deploy | A PHP port of `DeployGate.ts` runs on every save; the last 30 versions are kept |
+| `wrangler secret put` | API keys go in a `daemon-config.php` that exists only on the server |
+| Dark instrument-panel styling | A `DESIGN.md` in the deployment project matches the WordPress site's colors and fonts; its build adds a `design.css` override, so this repo's styles stay untouched |
+
+How it fits together:
+
+- **Data stays off the web root.** WordPress writes `daemon-data.json` and its history to a folder outside every docroot; `api.php` reads it. The subdomain only answers on its own hostname, and the PHP library, config and cron script are blocked from direct access.
+- **The same rules hold.** The PHP gate and the PHP `stripEphemera` share test cases with this repo (`tests/fixtures/gate-cases.json`), so TTL and location rules match upstream exactly. Outbound feed fetches go through one function that allows only public https addresses.
+- **Build.** The deployment project's `build.sh` runs its PHP tests, builds this repo's dashboard (`bun run build`), applies the design override, and assembles two upload folders: the subdomain docroot and the `daemon-admin` WordPress plugin. Nothing is uploaded automatically.
+
+### Branches
+
+- `main` mirrors [danielmiessler/Daemon](https://github.com/danielmiessler/Daemon). Never commit to it; pull upstream into it with GitHub's **Sync fork** or `git pull upstream main`.
+- `michaelweihrouch` (the default branch) is `main` plus this fork's changes. After syncing `main`, merge it in: `git checkout michaelweihrouch && git merge main`.
+- For a change meant for upstream, branch from `main`, not `michaelweihrouch`, and open the pull request against `danielmiessler/Daemon`.
+- The deployment build uses whatever branch is checked out here, so keep `michaelweihrouch` checked out.
