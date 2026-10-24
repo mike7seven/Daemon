@@ -108,7 +108,7 @@ This fork runs the same dashboard on ordinary shared hosting (cPanel, PHP 8.4) n
 | Edit `daemon-data.json` in a private repo, run `deploy.sh` | Edit in WordPress: **wp-admin → Daemon** (status, now, location, offerings, requesting, profile JSON) |
 | `DeployGate.ts` runs before each deploy | A PHP port of `DeployGate.ts` runs on every save; the last 30 versions are kept |
 | `wrangler secret put` | API keys go in a `daemon-config.php` that exists only on the server |
-| Dark instrument-panel styling | A `DESIGN.md` in the deployment project matches the WordPress site's colors and fonts; its build adds a `design.css` override, so this repo's styles stay untouched |
+| Dark instrument-panel styling | [`DESIGN.md`](DESIGN.md) on this branch matches the WordPress site's colors and fonts; the deployment build turns it into a `design.css` override, so the dashboard's own styles stay untouched |
 
 How it fits together:
 
