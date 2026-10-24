@@ -119,7 +119,7 @@ How it fits together:
 ### Branches
 
 - `main` tracks [danielmiessler/Daemon](https://github.com/danielmiessler/Daemon) and only receives upstream updates: GitHub's **Sync fork**, or `git pull upstream main`. It is one commit ahead (`34d42ca`, privacy and feed fixes offered upstream in [#5](https://github.com/danielmiessler/Daemon/pull/5)); commit nothing else there.
-- `deployment` (the default branch) is what the live site is built from: `main` plus this fork's changes, including [`DESIGN.md`](DESIGN.md). After syncing `main`, merge it in: `git checkout deployment && git merge main`.
-- Work happens on numbered branches cut from `deployment`: `working-01`, `working-02`, and so on. Merge each back into `deployment` when it's done; the next piece of work gets the next number.
+- `deployment` (the default branch) is what the live site is built from: `main` plus this fork's changes, including [`DESIGN.md`](DESIGN.md). It's protected: changes arrive only by pull request, and it can't be force-pushed or deleted. After syncing `main`, bring it in with a pull request from `main` into `deployment`.
+- Work happens on numbered branches cut from `deployment`: `working-01`, `working-02`, and so on. Each one goes back into `deployment` through a pull request; the branch is deleted on merge, and the next piece of work gets the next number.
 - For a change meant for upstream, branch from `main` instead and open the pull request against `danielmiessler/Daemon`.
 - The deployment build uses whatever branch is checked out here, so check out `deployment` before building for the live site.
