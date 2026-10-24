@@ -1,0 +1,33 @@
+{
+  "now": "2026-08-01T12:00:00.000Z",
+  "cases": [
+    { "name": "status without expires", "data": { "status": { "headline": "Building" } }, "expect": ["ttl:status"] },
+    { "name": "status expired", "data": { "status": { "headline": "Building", "expires": "2026-07-01T00:00:00.000Z" } }, "expect": ["ttl:status"] },
+    { "name": "status fresh", "data": { "status": { "headline": "Building", "expires": "2026-09-01T00:00:00.000Z" } }, "expect": [] },
+    { "name": "now without meta", "data": { "now": "Shipping" }, "expect": ["ttl:now"] },
+    { "name": "now with expiry", "data": { "now": "Shipping", "now_meta": { "expires": "2026-09-01T00:00:00.000Z" } }, "expect": [] },
+    { "name": "temporal offering without expiry", "data": { "offerings": [{ "title": "Office hours this week" }] }, "expect": ["ttl:offerings[0]"] },
+    { "name": "temporal offering with expiry", "data": { "offerings": [{ "title": "Office hours this week", "expires": "2026-09-01T00:00:00.000Z" }] }, "expect": [] },
+    { "name": "expired request", "data": { "requesting": [{ "title": "Reviewers", "expires": "2026-07-01T00:00:00.000Z" }] }, "expect": ["ttl:requesting[0]"] },
+    { "name": "default location", "data": { "location_default": "Pacific Northwest", "current_location": "Pacific Northwest" }, "expect": [] },
+    { "name": "travel without expiry", "data": { "location_default": "Pacific Northwest", "current_location": "Lisbon" }, "expect": ["ttl:current_location"] },
+    { "name": "travel with expiry", "data": { "location_default": "Pacific Northwest", "current_location": "Lisbon", "location_meta": { "expires": "2026-09-01T00:00:00.000Z" } }, "expect": [] },
+    { "name": "travel expired", "data": { "location_default": "Pacific Northwest", "current_location": "Lisbon", "location_meta": { "expires": "2026-07-01T00:00:00.000Z" } }, "expect": ["ttl:current_location"] },
+    { "name": "location with no default", "data": { "current_location": "Lisbon" }, "expect": ["ttl:current_location"] },
+    { "name": "coordinates in prose", "data": { "narrative": "Home base is 47.6062, -122.3321" }, "expect": ["location:narrative"] },
+    { "name": "street address in resume", "data": { "resume": [{ "summary": "Office at 500 Market Street" }] }, "expect": ["location:resume[0].summary"] },
+    { "name": "lowercase street address", "data": { "projects": { "personal": ["Garden at 12 elm st"] } }, "expect": ["location:projects.personal[0]"] },
+    { "name": "ZIP code", "data": { "about": "Based near 10001" }, "expect": ["location:about"] },
+    { "name": "ZIP+4", "data": { "about": "Based near 94110-1234" }, "expect": ["location:about"] },
+    { "name": "money is not a ZIP", "data": { "about": "Raised $25000 for the project" }, "expect": [] },
+    { "name": "decimal is not a ZIP", "data": { "about": "Accuracy 0.12345 on the benchmark" }, "expect": [] },
+    { "name": "URL id is not a ZIP", "data": { "resume_link": "https://example.com/posts/12345" }, "expect": [] },
+    { "name": "prose is not an address", "data": { "about": "Spent 3 days on the road" }, "expect": [] },
+    { "name": "real-time phrasing", "data": { "status": { "headline": "I'm at the conference", "expires": "2026-09-01T00:00:00.000Z" } }, "expect": ["realtime:status"] },
+    { "name": "real-time approved", "data": { "status": { "headline": "I'm at the conference", "expires": "2026-09-01T00:00:00.000Z", "realtime_approved": true } }, "expect": [] },
+    { "name": "credential", "data": { "preferences": ["key sk-abcdefghijklmnopqrstuvwxyz"] }, "expect": ["credential:payload"] },
+    { "name": "http feed", "data": { "feeds": [{ "type": "rss", "url": "http://example.com/feed" }] }, "expect": ["feeds:feeds[0]"] },
+    { "name": "private feed", "data": { "feeds": [{ "type": "rss", "url": "https://192.168.1.5/feed" }] }, "expect": ["feeds:feeds[0]"] },
+    { "name": "public feed", "data": { "feeds": [{ "type": "rss", "url": "https://example.com/feed" }] }, "expect": [] }
+  ]
+}

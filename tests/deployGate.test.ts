@@ -78,3 +78,12 @@ test('feed sources must be public https', () => {
   expect(rules({ feeds: [{ type: 'rss', url: 'https://192.168.1.5/feed' }] })).toEqual(['feeds:feeds[0]'])
   expect(rules({ feeds: [{ type: 'rss', url: 'https://example.com/feed' }] })).toEqual([])
 })
+
+// The same cases run against the PHP port of the gate in the WordPress deployment (michaelweihrouch-com/daemon/tests)
+import cases from './fixtures/gate-cases.json'
+
+for (const c of cases.cases) {
+  test(`shared case: ${c.name}`, () => {
+    expect(gate(c.data as Record<string, any>, Date.parse(cases.now)).map(v => `${v.rule}:${v.where}`)).toEqual(c.expect)
+  })
+}
