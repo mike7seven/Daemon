@@ -118,7 +118,7 @@ How it fits together:
 
 ### Branches
 
-- `main` mirrors [danielmiessler/Daemon](https://github.com/danielmiessler/Daemon). Never commit to it; pull upstream into it with GitHub's **Sync fork** or `git pull upstream main`.
+- `main` tracks [danielmiessler/Daemon](https://github.com/danielmiessler/Daemon); pull upstream into it with GitHub's **Sync fork** or `git pull upstream main`. It is one commit ahead (`34d42ca`, privacy and feed fixes meant to go upstream as a pull request); commit nothing else there.
 - `michaelweihrouch` (the default branch) is `main` plus this fork's changes. After syncing `main`, merge it in: `git checkout michaelweihrouch && git merge main`.
 - For a change meant for upstream, branch from `main`, not `michaelweihrouch`, and open the pull request against `danielmiessler/Daemon`.
 - The deployment build uses whatever branch is checked out here, so keep `michaelweihrouch` checked out.
